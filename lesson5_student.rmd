@@ -8,7 +8,6 @@ Notes: Here we will do Data Analysis using not 2 but more variables.
 
 ###Load Data and packages
 ```{r Prep work}
-install.packages("reshape2")
 library(ggplot2)
 library(tidyr)
 library(dplyr)
@@ -154,7 +153,7 @@ What is the maximum friend rate? - 417
 ***
 
 ### Friendships Initiated
-Notes:
+Notes:Below is a plot that shows friendsjhips initiated by tenure
 
 ```{r Friendships Initiated}
 pf %>% 
@@ -234,7 +233,7 @@ yo <- transform(yo, all.purchases = strawberry + blueberry + pina.colada + plain
 ***
 
 ### Prices over Time
-Notes:
+Notes:We create a scatter plot of price vs time and see that price of the yogurt bought increases over time
 
 ```{r Prices over Time}
 ggplot(aes(x = time, y = price), data = yo) +
@@ -244,39 +243,32 @@ ggplot(aes(x = time, y = price), data = yo) +
 ***
 
 ### Sampling Observations
-Notes:
+Notes:It is often useful to work with a sample of the data set to get a better feel of the general pattern of the data.
 
 ***
 
 ### Looking at Samples of Households
 
 ```{r Looking at Sample of Households}
+set.seed(77)
+sample.ids <- sample(levels(yo$id), 16)
 
+ggplot(aes(x = time, y = price), data = subset(yo, id %in% sample.ids)) +
+  geom_point(aes(size = all.purchases), pch = 21, col = "black", fill = "orange") +
+  geom_line() +
+  facet_wrap( ~ id)
 ```
-
+Above we have randomly selected 16 different ids from the data set. Before this we had made id as a factor because the id variable shows the different purchases of the same buyer. 
+Next we have plotted the price vs time scatter plot for the selected 16 ids and faceted over ids. Since we have used the id variable as a factor therefore we can facet the plot over id. We have also mapped all.purchases to size in the aesthetics of the geom point. From this we can see that the bigger the size of the point  more the yogurt was bought by that id. For example for id 2124545 starting from the begining the buyer bought 2 yogurts then 2, then 3, then 1 and so on.
 ***
 
 ### The Limits of Cross Sectional Data
-Notes:Cross sectional data does not enable us to study a variable over a over different values of a different variable
-
-***
-
-### Scatterplot Matrix
-Notes: Here we create plots for each pair of the variables in the pf data set. The plots are below the diagonal and the correlation is above the diagonal.
-```{r}
-theme_set(theme_minimal(20))
-
-set.seed(1836)
-pf_subset <- pf[, c(2:15)]
-names(pf_subset)
-
-ggpairs(pf_subset[sample.int(nrow(pf_subset), 1000), ])
-```
+Notes: Cross sectional data does not provide us the ability to to study same values of one varaible for different values of another variable
 
 ***
 
 ### Heat Maps
-Notes:We plot a heat map for genome data. Here we have only selected 200 out of about 6000 genes.
+Notes:Herw we plot a Heat map for gene data. The data set has close to 7000 observations but we plot this for 200 observations
 
 ```{r}
 nci <- read.table("nci.tsv")
@@ -284,7 +276,7 @@ colnames(nci) <- c(1:64)
 ```
 
 ```{r}
-nci.long.samp <- melt(as.matrix(nci[1:200,]))
+nci.long.samp <- melt(as.matrix(nci[1:200, ]))
 names(nci.long.samp) <- c("gene", "case", "value")
 head(nci.long.samp)
 
