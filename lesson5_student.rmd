@@ -257,27 +257,26 @@ Notes:
 ***
 
 ### The Limits of Cross Sectional Data
-Notes:
-
-***
-
-### Many Variables
-Notes:
+Notes:Cross sectional data does not enable us to study a variable over a over different values of a different variable
 
 ***
 
 ### Scatterplot Matrix
-Notes:
+Notes: Here we create plots for each pair of the variables in the pf data set. The plots are below the diagonal and the correlation is above the diagonal.
+```{r}
+theme_set(theme_minimal(20))
 
-***
+set.seed(1836)
+pf_subset <- pf[, c(2:15)]
+names(pf_subset)
 
-### Even More Variables
-Notes:
+ggpairs(pf_subset[sample.int(nrow(pf_subset), 1000), ])
+```
 
 ***
 
 ### Heat Maps
-Notes:
+Notes:We plot a heat map for genome data. Here we have only selected 200 out of about 6000 genes.
 
 ```{r}
 nci <- read.table("nci.tsv")
@@ -295,14 +294,4 @@ ggplot(aes(y = gene, x = case, fill = value),
   scale_fill_gradientn(colours = colorRampPalette(c("blue", "red"))(100))
 ```
 
-
 ***
-
-### Analyzing Three of More Variables
-Reflection:
-
-***
-
-Click **KnitHTML** to see all of your hard work and to have an html
-page of this lesson, your answers, and your notes!
-
