@@ -1,0 +1,76 @@
+---
+title: "DiamondsAreForever"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+library(reshape2)
+data(diamonds)
+pf <- read.csv("pseudo_facebook.tsv",sep = "\t")
+```
+
+
+### Price Histograms with Facet and Color
+```{r}
+ggplot(aes(price), data = diamonds) +
+  geom_histogram(aes(colour = cut), binwidth = .055) +
+  facet_wrap( ~ color) +
+  scale_x_continuous(trans = "log10") +
+  scale_fill_brewer(type = "qual")
+```
+
+
+###Price vs. Table Colored by Cut
+```{r}
+ggplot(aes(x = table, y = price, colour = cut), data = diamonds) +
+  geom_point() +
+  coord_cartesian(xlim = c(50, 80))
+```
+
+
+###Price vs. Volume and Diamond Clarity
+```{r}
+ggplot(aes(x = x * y * z, y = price, colour = clarity), data = diamonds) +
+  geom_point() +
+  scale_y_continuous(trans = "log10") +
+  scale_x_continuous(limits = c(0, quantile(diamonds$x * diamonds$y * diamonds$z, 0.99))) +
+  scale_color_brewer(type = "div")
+  
+```
+
+
+###Proportion of Friendships Initiated
+```{r}
+pf$prop_initiated <- pf$friendships_initiated/pf$friend_count
+```
+
+
+###prop_initiated vs. tenure
+```{r}
+pf$year_joined <- floor(2014 - pf$tenure/365)
+
+pf$year_joined.bucket <- cut(pf$year_joined, breaks = c(2004, 2009, 2011, 2012, 2014)) 
+
+ggplot(aes(x = tenure, y = prop_initiated), 
+       data = subset(pf, !is.nan(prop_initiated))) +
+  geom_line(aes(colour = year_joined.bucket), 
+            stat = "summary", fun.y = median) +
+  geom_smooth(se = T)
+
+with(subset(pf, pf$year_joined.bucket == "(2012,2014]" & !is.nan(pf$prop_initiated)),
+     mean(prop_initiated))
+```
+
+
+###Price/Carat Binned, Faceted, & Colored
+```{r}
+ggplot(aes(x = cut, y = price/carat, colour = color), data = diamonds) +
+  geom_point() +
+  facet_wrap( ~ clarity)
+```
+
+
+
